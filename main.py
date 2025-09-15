@@ -4,26 +4,26 @@ eventos = []
 def cadastro_usuarios(nome, email, senha):
     if email in usuarios:
         return False, """Você já está cadastrado(a)! Tente fazer o login."""
-    usuarios[email] = {"Nome": nome, "Senha": senha}
+    usuarios[email] = {"nome": nome, "senha": senha}
     return True, f"Você foi cadastrado(a) com sucesso! Seja bem vindo {nome}."
 
 def login_usuarios(email, senha):
     if email in usuarios and usuarios[email]["senha"] == senha:
-        return True, """Seja bem vindo, {usuarios[email]['nome']}!"""
+        return True, f"""Seja bem vindo(a), {usuarios[email]['nome']}!"""
     return False, """Email e senha inválidos. Tente novamente ou cadastr-se caso ainda não tenha uma conta!"""
 
 def cadastro_eventos(nome, sub, cidade, data):
-    evento = {"nome": nome, "sub(idade)": sub, "cidade": cidade, "data": data}
+    evento = {"nome": nome, "sub": sub, "cidade": cidade, "data": data}
     eventos.append(evento)
-    return """Evento '{nome}' cadastrado com sucesso e ocorrerá na cidade '{cidade}' em '{data}'!"""
+    return f"""Evento '{nome}' cadastrado com sucesso e ocorrerá na cidade '{cidade}' em '{data}'!"""
 
 def listar_eventos():
     if not eventos:
         return """Nenhum evento cadastrado ainda! Cadastre um novo evento para que ele seja exibido aqui."""
-    resultado = "/n Eventos /n"
+    resultado = "\n Eventos \n"
     for i, e in enumerate(eventos, 1):
-        resultado += f"{i}, {e['nome']} - ({e['sub']}) - ({e['cidade']}) - {e['data']} /n"
-        return resultado
+        resultado += f"{i}: {e['nome']} - {e['sub']} - {e['cidade']} - {e['data']} \n"
+    return resultado
     
 def menu():
     while True:
@@ -32,7 +32,7 @@ def menu():
         print("2. Login")
         print("3. Cadastrar Evento")
         print("4. Listar Eventos")
-        print("0. Sair")
+        print("5. Sair")
         opcao = input("Escolha uma opção: ")
 
         if opcao == "1":
