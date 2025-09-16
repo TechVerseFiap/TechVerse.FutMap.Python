@@ -1,24 +1,24 @@
-# Dicionário para armazenar usuárias cadastradas (email como chave)
+# Dicionário para armazenar usuários cadastrados (email como chave)
 usuarios = {}
 # Lista para armazenar os eventos cadastrados
 eventos = []
 
-# Função para cadastrar novas usuárias
+# Função para cadastrar novos usuários
 def cadastro_usuarios(nome, email, senha):
     # Verifica se o email já está cadastrado
     if email in usuarios:
         return False, """Você já está cadastrado(a)! Tente fazer o login."""
     # Se não estiver, adiciona no dicionário
     usuarios[email] = {"nome": nome, "senha": senha}
-    return True, f"Você foi cadastrado(a) com sucesso! Seja bem vindo {nome}."
+    return True, f"Você foi cadastrado(a) com sucesso! Seja bem-vindo {nome}. Faça o login para usufruir de nosso sistema."
 
-# Função para login de usuárias
+# Função para login de usuários
 def login_usuarios(email, senha):
     # Confere se o email existe e se a senha está correta
     if email in usuarios and usuarios[email]["senha"] == senha:
         return True, f"""Seja bem vindo(a), {usuarios[email]['nome']}!"""
     # Caso contrário, retorna erro de login
-    return False, """Email e senha inválidos. Tente novamente ou cadastr-se caso ainda não tenha uma conta!"""
+    return False, """E-mail e senha inválidos. Tente novamente ou cadastr-se caso ainda não tenha uma conta!"""
 
 # Função para cadastrar eventos
 def cadastro_eventos(nome, sub, cidade, data):
@@ -49,17 +49,17 @@ def menu():
         print("5. Sair")
         opcao = input("Escolha uma opção: ")
 
-        # Cadastro de usuária
+        # Cadastro de usuário
         if opcao == "1":
             nome = input("Nome: ")
-            email = input("Email: ")
+            email = input("E-mail: ")
             senha = input("Senha: ")
             ok, msg = cadastro_usuarios(nome, email, senha)
             print(msg)
 
-        # Login de usuária
+        # Login de usuário
         elif opcao == "2":
-            email = input("Email: ")
+            email = input("E-mail: ")
             senha = input("Senha: ")
             ok, msg = login_usuarios(email, senha)
             print(msg)
