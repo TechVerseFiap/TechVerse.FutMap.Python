@@ -1,108 +1,35 @@
-import json
-import os
+usuarios = {}
+eventos = []
 
-# ==============================
-# Funções utilitárias de arquivo JSON
-# ==============================
-
-def carregar_dados(arquivo, tipo_dado):
-    """Carrega os dados de um arquivo JSON, caso exista."""
-    if os.path.exists(arquivo):
-        try:
-            with open(arquivo, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except json.JSONDecodeError:
-            print(f"Erro ao ler o arquivo {arquivo}. Criando um novo arquivo vazio.")
-    # Retorna vazio caso não exista ou haja erro
-    return {} if tipo_dado == "usuarios" else []
-
-
-def salvar_dados(arquivo, dados):
-    """Salva os dados em formato JSON."""
-    with open(arquivo, 'w', encoding='utf-8') as f:
-        json.dump(dados, f, indent=4, ensure_ascii=False)
-
-
-# ==============================
-# Carregamento inicial dos dados
-# ==============================
-usuarios = carregar_dados('usuarios.json', "usuarios")
-eventos = carregar_dados('eventos.json', "eventos")
-
-
-# ==============================
-# Funções de validação
-# ==============================
-
-def pegar_numero(msg):
-    """Solicita um número inteiro ao usuário com tratamento de erro."""
-    while True:
-        try:
-            valor = int(input(msg))
-            return valor
-        except ValueError:
-            print("A opção precisa ser um número, tente novamente!")
-
-
-def pegar_texto(msg):
-    """Solicita texto e evita campos vazios."""
-    while True:
-        texto = input(msg).strip()
-        if texto:
-            return texto
-        print("Este campo não pode ficar vazio!")
-
-
-# ==============================
-# Funções principais
-# ==============================
-
+# Função para cadastrar novos usuários
 def cadastro_usuarios(nome, email, senha):
-    """Cadastra uma nova usuária se o e-mail ainda não estiver registrado."""
     if email in usuarios:
-        return False, "Você já está cadastrada! Tente fazer login."
-    
+        return False, """Você já está cadastrado(a)! Tente fazer o login."""
     usuarios[email] = {"Nome": nome, "Senha": senha}
-    salvar_dados('usuarios.json', usuarios)
-    return True, f"Usuária {nome} cadastrada com sucesso!"
+    return True, f"Você foi cadastrado(a) com sucesso! Seja bem vindo {nome}."
 
-
+# Função para login de usuários
 def login_usuarios(email, senha):
-    """Valida o login de uma usuária existente."""
-    if email in usuarios and usuarios[email]["Senha"] == senha:
-        nome = usuarios[email]["Nome"]
-        return True, f"Seja bem-vinda, {nome}!"
-    return False, "Email ou senha inválidos. Tente novamente."
+    if email in usuarios and usuarios[email]["senha"] == senha:
+        return True, """Seja bem vindo, {usuarios[email]['nome']}!"""
+    return False, """Email e senha inválidos. Tente novamente ou cadastr-se caso ainda não tenha uma conta!"""
 
-
+# Função para cadastrar eventos
 def cadastro_eventos(nome, sub, cidade, data):
-    """Cadastra um novo evento e salva no JSON."""
-    evento = {
-        "Nome": nome,
-        "Categoria": sub,
-        "Cidade": cidade,
-        "Data": data
-    }
+    evento = {"nome": nome, "sub(idade)": sub, "cidade": cidade, "data": data}
     eventos.append(evento)
-    salvar_dados('eventos.json', eventos)
-    return f"Evento '{nome}' cadastrado com sucesso em {cidade} na data {data}!"
+    return """Evento '{nome}' cadastrado com sucesso e ocorrerá na cidade '{cidade}' em '{data}'!"""
 
-
+# Função para listar todos os eventos cadastrados
 def listar_eventos():
     """Lista todos os eventos cadastrados."""
     if not eventos:
-        return "Nenhum evento cadastrado ainda!"
+        return """Nenhum evento cadastrado ainda! Cadastre um novo evento para que ele seja exibido aqui."""
+    resultado = "/n Eventos /n"
+    for i, e in enumerate(eventos, 1):
+        resultado += f"{i}, {e['nome']} - ({e['sub']}) - ({e['cidade']}) - {e['data']} /n"
+        return resultado
     
-    resultado = "\n=== Lista de Eventos ===\n"
-    for i, e in enumerate(eventos, start=1):
-        resultado += f"{i}. {e['Nome']} ({e['Categoria']}) - {e['Cidade']} - {e['Data']}\n"
-    return resultado
-
-
-# ==============================
-# Função principal (menu)
-# ==============================
-
 def menu():
     """Interface principal do sistema."""
     while True:
@@ -112,48 +39,39 @@ def menu():
         print("3. Cadastrar Evento")
         print("4. Listar Eventos")
         print("0. Sair")
-
         opcao = input("Escolha uma opção: ")
 
-        try:
-            if opcao == "1":
-                nome = pegar_texto("Nome: ")
-                email = pegar_texto("Email: ")
-                senha = pegar_texto("Senha: ")
-                ok, msg = cadastro_usuarios(nome, email, senha)
-                print(msg)
+        if opcao == "1":
+            nome = input("Nome: ")
+            email = input("Email: ")
+            senha = input("Senha: ")
+            ok, msg = cadastro_usuarios(nome, email, senha)
+            print(msg)
 
-            elif opcao == "2":
-                email = pegar_texto("Email: ")
-                senha = pegar_texto("Senha: ")
-                ok, msg = login_usuarios(email, senha)
-                print(msg)
+        elif opcao == "2":
+            email = input("Email: ")
+            senha = input("Senha: ")
+            ok, msg = login_usuarios(email, senha)
+            print(msg)
 
-            elif opcao == "3":
-                nome = pegar_texto("Nome do evento: ")
-                sub = pegar_texto("Categoria de idade das jogadoras (ex: Sub-17): ")
-                cidade = pegar_texto("Cidade: ")
-                data = pegar_texto("Data (DD/MM/AAAA): ")
-                print(cadastro_eventos(nome, sub, cidade, data))
+        elif opcao == "3":
+            nome = input("Nome do evento: ")
+            sub = input("Categoria de idade das jogadoras: ")
+            cidade = input("Cidade: ")
+            data = input("Data (DD/MM/AAAA): ")
+            print (cadastro_eventos(nome, sub, cidade, data))
 
-            elif opcao == "4":
-                print(listar_eventos())
+        elif opcao == "4":
+            print(listar_eventos())
+        
+        elif opcao == "5":
+            print("Saindo do sistema, agradecemos por estar aqui!")
+            break
 
-            elif opcao == "0":
-                print("Saindo do sistema. Obrigado por participar!")
-                break
+        else:
+            print ("Opção inválida, insira um número de 1 a 5 e tente novamente.")
 
-            else:
-                print("Opção inválida. Digite um número entre 0 e 4.")
-
-        except Exception as e:
-            # Captura qualquer erro inesperado e evita que o programa quebre
-            print(f"Ocorreu um erro inesperado: {e}")
-
-
-# ==============================
-# Execução do programa
-# ==============================
-
+# Ponto de entrada do programa
+# Só executa o menu se o arquivo for rodado diretamente
 if __name__ == "__main__":
     menu()
