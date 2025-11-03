@@ -30,6 +30,64 @@ def listar_eventos():
         resultado += f"{i}, {e['nome']} - ({e['sub']}) - ({e['cidade']}) - {e['data']} /n"
         return resultado
     
+# Função para editar um evento existente
+def editar_evento():
+    if not eventos:
+        print("Nenhum evento cadastrado para editar.")
+        return
+    
+    print("=== Eventos Cadastrados ===")
+    for i, e in enumerate(eventos, start=1):
+        print(f"{i}. {e['nome']} - {e['cidade']} - {e['data']}")
+    
+    try:
+        escolha = int(input("Digite o número do evento que deseja editar: ")) - 1
+        if escolha < 0 or escolha >= len(eventos):
+            print("Número inválido.")
+            return
+        
+        evento = eventos[escolha]
+        print(f"Editando evento: {evento['nome']}")
+        
+        novo_nome = input(f"Novo nome (ou Enter para manter '{evento['nome']}'): ")
+        nova_cidade = input(f"Nova cidade (ou Enter para manter '{evento['cidade']}'): ")
+        nova_data = input(f"Nova data (ou Enter para manter '{evento['data']}'): ")
+        nova_sub = input(f"Nova categoria (ou Enter para manter '{evento['sub(idade)']}'): ")
+        
+        # Atualiza apenas o que o usuário alterar
+        if novo_nome: evento['nome'] = novo_nome
+        if nova_cidade: evento['cidade'] = nova_cidade
+        if nova_data: evento['data'] = nova_data
+        if nova_sub: evento['sub(idade)'] = nova_sub
+        
+        print("Evento atualizado com sucesso!")
+    
+    except ValueError:
+        print("Digite um número válido.")
+
+
+# Função para excluir um evento
+def excluir_evento():
+    if not eventos:
+        print("Nenhum evento cadastrado para excluir.")
+        return
+    
+    print("=== Eventos Cadastrados ===")
+    for i, e in enumerate(eventos, start=1):
+        print(f"{i}. {e['nome']} - {e['cidade']} - {e['data']}")
+    
+    try:
+        escolha = int(input("Digite o número do evento que deseja excluir: ")) - 1
+        if escolha < 0 or escolha >= len(eventos):
+            print("Número inválido.")
+            return
+        
+        evento_removido = eventos.pop(escolha)
+        print(f"Evento '{evento_removido['nome']}' removido com sucesso!")
+    
+    except ValueError:
+        print("Digite um número válido.")
+
 def menu():
     """Interface principal do sistema."""
     while True:
@@ -38,6 +96,8 @@ def menu():
         print("2. Login")
         print("3. Cadastrar Evento")
         print("4. Listar Eventos")
+        print("5. Editar Evento")
+        print("6. Excluir Evento")
         print("0. Sair")
         opcao = input("Escolha uma opção: ")
 
@@ -65,6 +125,12 @@ def menu():
             print(listar_eventos())
         
         elif opcao == "5":
+            editar_evento()
+
+        elif opcao == "6":
+            excluir_evento()
+
+        elif opcao == "0":
             print("Saindo do sistema, agradecemos por estar aqui!")
             break
 
