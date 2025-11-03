@@ -1,5 +1,23 @@
+import json
+
 usuarios = {}
 eventos = []
+
+ARQUIVO_EVENTOS = "eventos.json"
+
+# Função para salvar eventos em arquivo
+def salvar_eventos():
+    with open(ARQUIVO_EVENTOS, "w", encoding="utf-8") as f:
+        json.dump(eventos, f, ensure_ascii=False, indent=4)
+
+# Função para carregar eventos do arquivo (caso exista)
+def carregar_eventos():
+    global eventos
+    try:
+        with open(ARQUIVO_EVENTOS, "r", encoding="utf-8") as f:
+            eventos = json.load(f)
+    except FileNotFoundError:
+        eventos = []
 
 # Função para cadastrar novos usuários
 def cadastro_usuarios(nome, email, senha):
@@ -140,4 +158,5 @@ def menu():
 # Ponto de entrada do programa
 # Só executa o menu se o arquivo for rodado diretamente
 if __name__ == "__main__":
+    carregar_eventos()  # Carrega os eventos salvos, se houver
     menu()
